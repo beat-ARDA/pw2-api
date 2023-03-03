@@ -1,5 +1,6 @@
 # pw2-api
 Integrantes del equipo:
+
 Zared Osvaldo Maldonado Rodríguez
 
 María Fernanda Rodríguez Mondragón
@@ -24,5 +25,6 @@ En resumen,será una plataforma de aprendizaje en línea que ofrecerá una ampli
 Tecnologías a usar:
 
 React
+
 Node Js
 
