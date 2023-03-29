@@ -15,7 +15,7 @@ class Product {
   }
 
   static create(data) {
-   
+      
   }
 
   static update(id, data) {

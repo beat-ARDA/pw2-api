@@ -1,6 +1,8 @@
 const User = require('../models/users');
-
-exports.LogInPassword = async (req, res) => {
-    const userId = await User.LogInPassword('alvaro.duronalj@uanl.edu.mx', 'BeatSociety.162');
-    console.log(userId);
+exports.Login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const userId = await User.LogInPassword(, 'BeatSociety.162');
+        res.json(userId);
+    } catch (error) { console.log(error) }
 };

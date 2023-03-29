@@ -1,5 +1,6 @@
 const dbConnect = require('../dbConnect');
 const conection = new dbConnect();
+
 class User {
   constructor(id, usuario, contra) {
     this.id = id;
@@ -9,8 +10,7 @@ class User {
 
   static async LogInPassword(email, password) {
     const dataLogin = await conection.Procedure(`CALL sp_LogInPassword('${email}', '${password}')`);
-    console.log(dataLogin)
-    //return JSON.parse(dataLogin)[0].userId;
+    return JSON.parse(dataLogin)[0].userId;
   }
 }
 

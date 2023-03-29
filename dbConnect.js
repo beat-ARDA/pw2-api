@@ -1,7 +1,6 @@
 const mysql = require('mysql2');
 require('mysql2/promise');
 class dbConnect {
-
     constructor() {
         this.connection = mysql.createConnection({
             host: 'localhost',
