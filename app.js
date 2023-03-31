@@ -3,7 +3,10 @@ const app = express();
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users.js');
 const cors = require('cors');
-const { LogInPassword } = require('./controllers/users');
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(express.json());
 app.use(cors({

@@ -6,15 +6,30 @@ class dbConnect {
             host: 'localhost',
             user: 'root',
             password: 'Pink$1624',
-            database: 'apicursos'
+            database: 'apicursos',
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
         });
     }
 
-    async Procedure(procedure) {
+    Connect() {
         this.connection.connect();
-        const [rows] = await this.connection.promise().query(procedure, true);
+    }
+
+    Disconnect() {
         this.connection.end();
-        return JSON.stringify(rows[0]);
+    }
+
+    async sp_login(sp_email, sp_password) {
+        const [emailData] = await this.connection.promise().query(sp_email, true);
+        const [passwordData] = await this.connection.promise().query(sp_password, true);
+        const loginData = { "emailData": emailData, "passwordData": passwordData }
+        return JSON.stringify(loginData);
+    }
+
+    async sp_updateAttemps(sp) {
+        await this.connection.promise().query(sp, true);
     }
 }
 
