@@ -19,7 +19,7 @@ class UserLogin {
       this.attemps = data.emailData[0].length > 0 ? data.emailData[0][0].attemps : null;
       this.userId = data.passwordData[0].length > 0 ? data.passwordData[0][0].userId : null;
 
-      if (this.attemps && this.userId)
+      if (this.attemps !== null && this.userId !== null)
         if (this.attemps == 3)
           dataLogin = { "message": `Tu usuario esta bloqueado, ponte en contacto con el administrador`, "status": 403 }
         else
