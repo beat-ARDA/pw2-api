@@ -1,4 +1,4 @@
-const { UserLogin, UserRegister } = require('../models/users');
+const { UserLogin, UserRegister, User } = require('../models/users');
 const multer = require('multer');
 
 const upload = multer({ dest: 'uploads/' });
@@ -23,3 +23,16 @@ exports.Register = async (req, res) => {
         res.json(response);
     } catch (error) { console.log(error) }
 };
+
+exports.GetUser = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+    const user = new User(id);
+
+    try {
+        let response = await user.GetUser();
+        res.json(response);
+    } catch (error) {
+        console.log(error);
+    }
+}

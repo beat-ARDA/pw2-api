@@ -70,4 +70,32 @@ class UserRegister {
   }
 }
 
-module.exports = { UserLogin, UserRegister };
+class User {
+  constructor(userId) {
+    this.email = null;
+    this.pass = null;
+    this.userType = null;
+    this.firstNames = null;
+    this.lastNames = null;
+    this.imageProfile = null;
+    this.gender = null;
+    this.birthdate = null;
+    this.userId = userId;
+  }
+
+  async GetUser() {
+    let response = { "message": "No se pudo ejecutar la accion", "status": 500 };
+    try {
+      conection.Connect();
+      const data = JSON.parse(await conection.sp_callGet(`CALL sp_ObtenerUsuarioPorId(${this.userId})`));
+      response = { "user": data[0][0] };
+    } catch (error) {
+      console.log(error);
+    }
+    return response;
+  }
+}
+
+
+
+module.exports = { UserLogin, UserRegister, User };

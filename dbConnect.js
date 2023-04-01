@@ -31,6 +31,11 @@ class dbConnect {
     async sp_call(sp) {
         await this.connection.promise().query(sp, true);
     }
+
+    async sp_callGet(sp) {
+        const [userData] = await this.connection.promise().query(sp, true);
+        return JSON.stringify(userData);
+    }
 }
 
 module.exports = dbConnect;
