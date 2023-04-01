@@ -36,7 +36,7 @@ class UserLogin {
             dataLogin = { "message": `Tu usuario esta bloqueado, ponte en contacto con el administrador`, "status": 403 }
           else
             dataLogin = { "message": `La contraseña ingresada es icorrecta, numero de intentos restantes: ${restAttemps}`, "status": 403 }
-          await conection.sp_updateAttemps(`CALL sp_IncrementUserAttemps('${this.attemps + 1}', '${this.email}')`);
+          await conection.sp_call(`CALL sp_IncrementUserAttemps('${this.attemps + 1}', '${this.email}')`);
         }
       }
     } catch (error) { console.log(error); }
@@ -45,4 +45,29 @@ class UserLogin {
   }
 }
 
-module.exports = UserLogin;
+class UserRegister {
+  constructor(firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender) {
+    this.email = email;
+    this.pass = pass;
+    this.userType = userType;
+    this.firstNames = firstNames;
+    this.lastNames = lastNames;
+    this.imageProfile = imageProfile;
+    this.gender = gender;
+    this.birthdate = birthDate;
+  }
+
+  async Register() {
+    let response = { "message": "No se pudo ejecutar la accion", "status": 500 };
+    try {
+      conection.Connect();
+      await conection.sp_call(`CALL sp_RegistrarUsuario('${this.email}', '${this.pass}', '${this.userType}', '${this.firstNames}', '${this.lastNames}',  null, '${this.gender}', '${this.birthdate}')`);
+      response = { "message": "Usuario registrado con exito!", "status": 200 };
+    } catch (error) {
+      console.log(error);
+    }
+    return response;
+  }
+}
+
+module.exports = { UserLogin, UserRegister };

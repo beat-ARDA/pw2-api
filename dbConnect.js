@@ -28,7 +28,7 @@ class dbConnect {
         return JSON.stringify(loginData);
     }
 
-    async sp_updateAttemps(sp) {
+    async sp_call(sp) {
         await this.connection.promise().query(sp, true);
     }
 }

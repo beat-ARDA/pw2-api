@@ -1,17 +1,15 @@
-const express = require('express');
-const app = express();
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users.js');
+const bodyParser = require('body-parser');
+const express = require('express');
 const cors = require('cors');
-var bodyParser = require('body-parser');
+const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(cors({ origin: '*' }));
 app.use(express.json());
-app.use(cors({
-    origin: '*'
-}));
 
 app.use('/api', productRoutes);
 app.use('/api', userRoutes);
