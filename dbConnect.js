@@ -5,7 +5,7 @@ class dbConnect {
         this.connection = mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: 'Pink$1624',
+            password: 'Zomrromr',
             database: 'apicursos',
             waitForConnections: true,
             connectionLimit: 10,
