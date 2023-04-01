@@ -23,7 +23,7 @@ class UserLogin {
         if (this.attemps == 3)
           dataLogin = { "message": `Tu usuario esta bloqueado, ponte en contacto con el administrador`, "status": 403 }
         else
-          dataLogin = { "message": "Credenciales correctas!", "userId": this.userId, "status": 200 }
+          dataLogin = { "message": "Credenciales correctas!", "userId": this.userId, "token": "JGJGJG", "status": 200 }
       else if (this.attemps == null)
         dataLogin = { "message": "No existe una cuenta con ese correo dentro de nuestra base de datos", "status": 404 }
       else if (this.userId == null) {
