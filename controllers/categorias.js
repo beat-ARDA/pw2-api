@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
-const categoria = prisma.categoria;
+const categoria = prisma.categorias;
 
 exports.getAll = async function (req, res) {
 
@@ -14,11 +14,11 @@ exports.getAll = async function (req, res) {
     }
 }
 
-exports.findById = async function (req, res) {
+exports.findById = async (req, res)=> {
+    const { id } = req.params;
     try {
-        const { id } = req.params;
         const categoriaEncontrada = await categoria.findUnique({
-            where: { idCategoria: id }
+            where: { idCategoria: parseInt(id)}
         });
 
         if (!categoriaEncontrada) {
@@ -33,22 +33,22 @@ exports.findById = async function (req, res) {
 }
 
 exports.Register = async function (req, res) {
+    const { descripcion, nomnbre } = req.body;
     try {
-        const { descripcion, nombre } = req.body;
-
-        // Crear la nueva categoría en la base de datos
-        const nuevaCategoria = await categoria.create({
+        // Registra la nueva categoría en la base de datos
+        const nuevaCategoria = await prisma.categorias.create({
             data: {
                 descripcion,
-                nombre,
-                fecha: new Date()
+                nombre:nombre,
+                fecha: new Date(),
+                activo: true
             }
         });
 
         res.json(nuevaCategoria);
     } catch (error) {
-        console.error('Error al crear la categoría:', error);
-        res.status(500).json({ error: 'Error al crear la categoría' });
+        console.error('Error al registrar la categoría:', error);
+        res.status(500).json({ error: 'Error al registrar la categoría' });
     }
 }
 
@@ -59,7 +59,7 @@ exports.Update = async function (req, res) {
 
         // Actualizar la categoría en la base de datos
         const categoriaActualizada = await categoria.update({
-            where: { idCategoria: id },
+            where: { idCategoria: parseInt(id) },
             data: {
                 descripcion,
                 nombre
@@ -70,7 +70,7 @@ exports.Update = async function (req, res) {
     } catch (error) {
         console.error('Error al actualizar la categoría:', error);
         res.status(500).json({ error: 'Error al actualizar la categoría' });
-    }
+    } finally { await prisma.$disconnect(); }
 }
 
 exports.Delete = async function (req, res) {
@@ -79,7 +79,7 @@ exports.Delete = async function (req, res) {
 
         // Realizar la baja lógica de la categoría en la base de datos
         const categoriaEliminada = await categoria.update({
-            where: { idCategoria: id },
+            where: { idCategoria: parseInt(id)},
             data: {
                 activo: false
             }
