@@ -27,16 +27,35 @@ exports.Login = async (req, res) => {
 };
 
 exports.Register = async (req, res) => {
-    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender, image } = req.body;
+    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
 
-    const image_ = new Blob(image);
+    const imageBuffer = Buffer.from(imageProfile, 'base64');
 
-    console.log(image_);
+    // Crear un objeto Blob
+    //const imageBlob = new Blob([imageBuffer]);
 
-    // try {
-    //     let response = await userRegisterModel.Register();
-    //     res.json(response);
-    // } catch (error) { console.log(error) }
+    try {
+
+        const user = await prisma.users.create({
+            data: {
+
+                email: email,
+                pass: pass,
+                userType: userType,
+                firstNames: firstNames,
+                lastNames: lastNames,
+                imageProfile: imageBuffer,
+                gender: gender,
+                birthdate: new Date(birthDate)
+            }
+        });
+
+        let response = { "status": 200, "message": 'Usuario registrado con exito!' }
+
+        res.json(response);
+    }
+    catch (error) { console.log(error) }
+    finally { await prisma.$disconnect(); }
 };
 
 exports.GetUser = async (req, res) => {
