@@ -7,20 +7,53 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:Pink$1624@localhost:3306/apicursos"
+  url      = "mysql://root:Zomrromr@localhost:3306/apicursos"
 }
 
 model users {
-  userId           Int      @id @default(autoincrement())
-  email            String   @db.VarChar(50)
-  pass             String   @db.VarChar(100)
-  userType         String   @db.VarChar(50)
-  firstNames       String   @db.VarChar(100)
-  lastNames        String   @db.VarChar(100)
-  imageProfile     Bytes
-  gender           String   @db.VarChar(10)
-  birthdate        DateTime
-  registrationDate DateTime @default(now())
-  dateUpdate       DateTime @updatedAt
-  attemps          Int      @default(0)
+  userId                Int      @id @default(autoincrement())
+  email                 String   @db.VarChar(50)
+  pass                  String   @db.VarChar(100)
+  userType              String   @db.VarChar(50)
+  firstNames            String   @db.VarChar(100)
+  lastNames             String   @db.VarChar(100)
+  imageProfile          Bytes
+  gender                String   @db.VarChar(10)
+  birthdate             DateTime
+  registrationDate      DateTime @default(now())
+  dateUpdate            DateTime @updatedAt
+  attemps               Int      @default(0)
+  cursos                curso[]
+}
+
+model categorias{
+  idCategoria           Int       @id @default(autoincrement())
+  descripcion           String    @db.VarChar(100)
+  nombre                String    @db.VarChar(50)
+  fecha                 DateTime  @default(now())
+  activo                Boolean   @default(true)
+  cursos                categoriascursos[]
+}
+
+model curso {
+  idCurso               Int     @id @default(autoincrement())
+  cost                  Int
+  descripcion           String
+  promedio              Int
+  imagen                Bytes
+  titulo                String
+  activo                Boolean @default(true)
+  instructor            Int
+  fecha_creacion        DateTime @default(now())
+  categoriaCursos       categoriascursos[]
+  instructor_usuario    users @relation(fields: [instructor], references: [userId])
+}
+
+model categoriascursos{
+  idCategoriaCurso      Int     @id @default(autoincrement())
+  curso                 Int
+  categoria             Int
+  fecha                 DateTime @default(now())
+  curso_detalle         curso @relation(fields: [curso], references: [idCurso])
+  categoria_detalle     categorias @relation(fields: [categoria], references: [idCategoria])
 }
