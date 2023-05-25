@@ -3,6 +3,23 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            const base64String = reader.result.split(',')[1];
+            resolve(base64String);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+
+        reader.readAsDataURL(blob);
+    });
+}
+
 exports.Login = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -36,9 +53,8 @@ exports.Register = async (req, res) => {
 
     try {
 
-        const user = await prisma.users.create({
+        await prisma.users.create({
             data: {
-
                 email: email,
                 pass: pass,
                 userType: userType,
@@ -59,14 +75,49 @@ exports.Register = async (req, res) => {
 };
 
 exports.GetUser = async (req, res) => {
+
     const { id } = req.params;
-    console.log(id);
-    const user = new User(id);
+
+    parseInt(id);
 
     try {
-        let response = await user.GetUser();
+        const user = await prisma.users.findFirst({
+            where: {
+                userId: parseInt(id)
+            },
+            select: {
+                userId: true,
+                email: true,
+                pass: true,
+                userType: true,
+                firstNames: true,
+                lastNames: true,
+                imageProfile: true,
+                gender: true,
+                birthdate: true,
+                registrationDate: true,
+                dateUpdate: true,
+                attemps: true
+            },
+        });
+
+        user.imageProfile = Buffer.from(user.imageProfile).toString('base64');
+
+        let response = {
+            "user": user
+        }
+
         res.json(response);
-    } catch (error) {
-        console.log(error);
-    }
+
+    } catch (error) { console.log(error) }
+
+    // console.log(id);
+    // const user = new User(id);
+
+    // try {
+    //     let response = await user.GetUser();
+    //     res.json(response);
+    // } catch (error) {
+    //     console.log(error);
+    // }
 }
