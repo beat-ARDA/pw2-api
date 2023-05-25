@@ -32,25 +32,28 @@ exports.findById = async (req, res)=> {
     }
 }
 
-exports.Register = async function (req, res) {
-    const { descripcion, nomnbre } = req.body;
+exports.Register = async (req, res) => {
+    var nombre = req.body.nombre;
+    var descripcion = req.body.descripcion;
+    console.log(nombre , descripcion);
+
     try {
-        // Registra la nueva categoría en la base de datos
-        const nuevaCategoria = await prisma.categorias.create({
+
+        await categoria.create({
             data: {
-                descripcion,
-                nombre:nombre,
-                fecha: new Date(),
-                activo: true
+                nombre: nombre,
+                descripcion: descripcion
             }
         });
 
-        res.json(nuevaCategoria);
-    } catch (error) {
-        console.error('Error al registrar la categoría:', error);
-        res.status(500).json({ error: 'Error al registrar la categoría' });
+        let response = { "status": 200, "message": 'Usuario registrado con exito!' }
+
+        res.json(response);
     }
+    catch (error) { console.log(error) }
+    finally { await prisma.$disconnect(); }
 }
+
 
 exports.Update = async function (req, res) {
     try {

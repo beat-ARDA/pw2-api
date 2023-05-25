@@ -1,6 +1,7 @@
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users.js');
 const categoriasRoutes=require('./routes/categorias.js')
+const cursoRoutes=require('./routes/cursos.js')
 
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api', productRoutes);
 app.use('/api', userRoutes);
 app.use('/api', categoriasRoutes);
+app.use('/api', cursoRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
