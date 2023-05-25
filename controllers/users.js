@@ -1,27 +1,42 @@
 const { UserLogin, UserRegister, User } = require('../models/users');
-const multer = require('multer');
+const { PrismaClient } = require('@prisma/client');
 
-const upload = multer({ dest: 'uploads/' });
+const prisma = new PrismaClient();
 
 exports.Login = async (req, res) => {
-
     const { email, password } = req.body;
-    const userLoginModel = new UserLogin(email, password);
-
     try {
-        const loginData = await userLoginModel.Login();
-        res.json(loginData);
+        const user = await prisma.users.findFirst({
+            where: {
+                email: email,
+                pass: password // ID del usuario que deseas encontrar
+            },
+            select: {
+                userId: true,
+                attemps: true
+            },
+        });
+
+        let response = {
+            "message": 'Credenciales correctas!', "userId": user.userId
+        }
+
+        res.json(response);
+
     } catch (error) { console.log(error) }
 };
 
 exports.Register = async (req, res) => {
-    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
-    const userRegisterModel = new UserRegister(firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender);
+    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender, image } = req.body;
 
-    try {
-        let response = await userRegisterModel.Register();
-        res.json(response);
-    } catch (error) { console.log(error) }
+    const image_ = new Blob(image);
+
+    console.log(image_);
+
+    // try {
+    //     let response = await userRegisterModel.Register();
+    //     res.json(response);
+    // } catch (error) { console.log(error) }
 };
 
 exports.GetUser = async (req, res) => {

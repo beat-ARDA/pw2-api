@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:Pink$1624@localhost:3306/apicursos"
+}
+
+model users {
+  userId           Int      @id @default(autoincrement())
+  email            String   @db.VarChar(50)
+  pass             String   @db.VarChar(100)
+  userType         String   @db.VarChar(50)
+  firstNames       String   @db.VarChar(100)
+  lastNames        String   @db.VarChar(100)
+  imageProfile     Bytes
+  gender           String   @db.VarChar(10)
+  birthdate        DateTime
+  registrationDate DateTime @default(now())
+  dateUpdate       DateTime @updatedAt
+  attemps          Int      @default(0)
+}
