@@ -14,5 +14,9 @@ app.use(express.json());
 app.use('/api', productRoutes);
 app.use('/api', userRoutes);
 
+app.get('/', (req, res) => {
+    res.json({ message: '¡Hola desde tu API!' });
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
