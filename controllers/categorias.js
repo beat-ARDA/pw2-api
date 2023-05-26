@@ -59,7 +59,7 @@ exports.Register = async (req, res) => {
             }
         });
 
-        let response = { "status": 200, "message": 'Usuario registrado con exito!' }
+        let response = { "status": 200, "message": 'Categoria registrado con exito!' }
 
         res.json(response);
     }
@@ -81,8 +81,10 @@ exports.Update = async function (req, res) {
                 nombre
             }
         });
+        let response = { "status": 200, "message": 'Categoria actualizada con exito!' }
 
-        res.json(categoriaActualizada);
+        res.json(response);
+
     } catch (error) {
         console.error('Error al actualizar la categoría:', error);
         res.status(500).json({ error: 'Error al actualizar la categoría' });

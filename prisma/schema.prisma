@@ -8,24 +8,26 @@ datasource db {
 }
 
 model users {
-  userId           Int                @id @default(autoincrement())
-  email            String             @db.VarChar(50)
-  pass             String             @db.VarChar(100)
-  userType         String             @db.VarChar(50)
-  firstNames       String             @db.VarChar(100)
-  lastNames        String             @db.VarChar(100)
-  imageProfile     Bytes?
-  gender           String             @db.VarChar(10)
-  birthdate        DateTime           @db.Date
-  registrationDate DateTime           @default(now()) @db.DateTime(0)
-  dateUpdate       DateTime           @default(now()) @updatedAt @db.DateTime(0)
-  attemps          Int                @default(0)
-  comentarios      comentarios[]
-  cursoalumno      cursoalumno[]
-  cursos           cursos[]
-  nivelcursoalumno nivelcursoalumno[]
-  secciones        secciones[]
-  videos           videos[]
+  userId                         Int                @id @default(autoincrement())
+  email                          String             @db.VarChar(50)
+  pass                           String             @db.VarChar(100)
+  userType                       String             @db.VarChar(50)
+  firstNames                     String             @db.VarChar(100)
+  lastNames                      String             @db.VarChar(100)
+  imageProfile                   Bytes?
+  gender                         String             @db.VarChar(10)
+  birthdate                      DateTime           @db.Date
+  registrationDate               DateTime           @default(now()) @db.DateTime(0)
+  dateUpdate                     DateTime           @default(now()) @updatedAt @db.DateTime(0)
+  attemps                        Int                @default(0)
+  comentarios                    comentarios[]
+  cursoalumno                    cursoalumno[]
+  cursos                         cursos[]
+  mensajes_mensajes_user1Tousers mensajes[]         @relation("mensajes_user1Tousers")
+  mensajes_mensajes_user2Tousers mensajes[]         @relation("mensajes_user2Tousers")
+  nivelcursoalumno               nivelcursoalumno[]
+  secciones                      secciones[]
+  videos                         videos[]
 }
 
 model categorias {
@@ -33,7 +35,6 @@ model categorias {
   descripcion String             @db.VarChar(100)
   nombre      String             @db.VarChar(50)
   fecha       DateTime           @default(now()) @db.DateTime(0)
-  activo      Boolean?
   curso       categoriascursos[]
 }
 
@@ -150,4 +151,17 @@ model videos {
 
   @@index([idSeccion], map: "idSeccion")
   @@index([idUsuario], map: "idUsuario")
+}
+
+model mensajes {
+  idMensaje                   Int      @id @default(autoincrement())
+  user1                       Int
+  user2                       Int
+  mensaje                     String   @db.VarChar(500)
+  fecha                       DateTime @default(now()) @db.DateTime(0)
+  users_mensajes_user1Tousers users    @relation("mensajes_user1Tousers", fields: [user1], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "mensajes_ibfk_1")
+  users_mensajes_user2Tousers users    @relation("mensajes_user2Tousers", fields: [user2], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "mensajes_ibfk_2")
+
+  @@index([user1], map: "user1")
+  @@index([user2], map: "user2")
 }

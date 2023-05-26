@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 exports.getAll = async function (req, res) {
     try {
-        const cursos = await prisma.curso.findMany();
+        const cursos = await prisma.cursos.findMany();
         res.json(cursos);
     } catch (error) {
         console.error('Error al obtener cursos:', error);
@@ -14,7 +14,7 @@ exports.getAll = async function (req, res) {
 exports.getById = async function (req, res) {
     try {
         const { id } = req.params;
-        const curso = await prisma.curso.findUnique({
+        const curso = await prisma.cursos.findUnique({
             where: { idCurso: parseInt(id) },
         });
 
@@ -31,7 +31,7 @@ exports.getById = async function (req, res) {
 
 exports.getActive = async function (req, res) {
     try {
-        const cursos = await prisma.curso.findMany({
+        const cursos = await prisma.cursos.findMany({
             where: { activo: true },
         });
 
@@ -47,7 +47,7 @@ exports.createCurso = async function (req, res) {
     try {
         const { cost, descripcion, promedio, imagen, titulo, instructor } = req.body;
 
-        const curso = await prisma.curso.create({
+        const curso = await prisma.cursos.create({
             data: {
                 cost,
                 descripcion,
@@ -69,7 +69,7 @@ exports.createCurso = async function (req, res) {
 // Read All
 exports.getAllCursos = async function (req, res) {
     try {
-        const cursos = await prisma.curso.findMany();
+        const cursos = await prisma.cursos.findMany();
         res.json(cursos);
     } catch (error) {
         console.error('Error al obtener cursos:', error);
@@ -81,7 +81,7 @@ exports.getAllCursos = async function (req, res) {
 exports.getCursoById = async function (req, res) {
     try {
         const { id } = req.params;
-        const curso = await prisma.curso.findUnique({
+        const curso = await prisma.cursos.findUnique({
             where: { idCurso: parseInt(id) },
         });
 
@@ -134,7 +134,7 @@ exports.updateCurso = async function (req, res) {
         const { id } = req.params;
         const { cost, descripcion, promedio, imagen, titulo, instructor } = req.body;
 
-        const updatedCurso = await prisma.curso.update({
+        const updatedCurso = await prisma.cursos.update({
             where: { idCurso: parseInt(id) },
             data: {
                 cost,
@@ -158,7 +158,7 @@ exports.deleteCurso = async function (req, res) {
     try {
         const { id } = req.params;
 
-        const deletedCurso = await prisma.curso.update({
+        const deletedCurso = await prisma.cursos.update({
             where: { idCurso: parseInt(id) },
             data: { activo: false },
         });

@@ -8,7 +8,7 @@ exports.createComment = async (req, res) => {
         const { id } = req.params;
         const { texto, postId } = req.body;
 
-        const comentario = await prisma.comentario.create({
+        const comentario = await prisma.comentarios.create({
             data: {
                 texto,
                 id,
@@ -26,7 +26,7 @@ exports.createComment = async (req, res) => {
 // Obtener todos los comentarios
 exports.getAllComments = async (req, res) => {
     try {
-        const comentarios = await prisma.comentario.findMany();
+        const comentarios = await prisma.comentarios.findMany();
         res.status(200).json(comentarios);
     } catch (error) {
         console.error('Error al obtener los comentarios:', error);
@@ -39,7 +39,7 @@ exports.getCommentById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const comentario = await prisma.comentario.findUnique({
+        const comentario = await prisma.comentarios.findUnique({
             where: {
                 id,
             },
@@ -62,7 +62,7 @@ exports.updateComment = async (req, res) => {
         const { id } = req.params;
         const { texto } = req.body;
 
-        const comentario = await prisma.comentario.update({
+        const comentario = await prisma.comentarios.update({
             where: {
                 id,
             },
