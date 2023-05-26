@@ -35,6 +35,7 @@ model categorias {
   descripcion String             @db.VarChar(100)
   nombre      String             @db.VarChar(50)
   fecha       DateTime           @default(now()) @db.DateTime(0)
+  activo      Boolean?           @default(true)
   curso       categoriascursos[]
 }
 

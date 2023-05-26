@@ -44,27 +44,59 @@ exports.getActive = async function (req, res) {
 
 // Create
 exports.createCurso = async function (req, res) {
+    const { cost, descripcion, promedio, imagen, titulo, instructor } = req.body;
+    const { costoNivel, tituloNivel, tituloSeccion, contenidoSeccion } = req.body;
     try {
-        const { cost, descripcion, promedio, imagen, titulo, instructor } = req.body;
-
-        const curso = await prisma.cursos.create({
+        
+        const newCurso = await prisma.cursos.create({
             data: {
-                cost,
+                cost: parseInt(cost),
                 descripcion,
-                promedio,
-                imagen,
+                promedio: parseInt(promedio),
+                imagen: Buffer.from(imagen, 'base64'),
                 titulo,
                 activo: true,
-                instructor,
+                instructor: parseInt(instructor),
+                fecha_creacion: new Date(),
+                categoriaCursos: {
+                    create: [
+                        {
+                            fecha: new Date(),
+                            categoria_detalle: {
+                                connect: { idCategoria: 1 }, // ID de la categoría relacionada
+                            },
+                        },
+                    ],
+                },
+                nivelcurso: {
+                    create: {
+                        costo: costoNivel,
+                        titulo: tituloNivel,
+                        secciones: {
+                            create: [
+                                {
+                                    titulo: tituloSeccion,
+                                    contenido: contenidoSeccion,
+                                },
+                            ],
+                        },
+                    },
+                },
             },
         });
 
-        res.json(curso);
+
+        console.log('Curso Registrado');
+        res.status(200).json("curso creado correctamente");
+
     } catch (error) {
         console.error('Error al crear el curso:', error);
         res.status(500).json({ error: 'Error al crear el curso' });
     }
 };
+
+
+
 
 // Read All
 exports.getAllCursos = async function (req, res) {
