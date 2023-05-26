@@ -1,24 +1,9 @@
-const { UserLogin, UserRegister, User } = require('../models/users');
 const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
+const atob = require('atob');
+const Blob = require('blob');
 
 const prisma = new PrismaClient();
-
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            const base64String = reader.result.split(',')[1];
-            resolve(base64String);
-        };
-
-        reader.onerror = (error) => {
-            reject(error);
-        };
-
-        reader.readAsDataURL(blob);
-    });
-}
 
 exports.Login = async (req, res) => {
     const { email, password } = req.body;
@@ -46,32 +31,32 @@ exports.Login = async (req, res) => {
 exports.Register = async (req, res) => {
     const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
 
-    const imageBuffer = Buffer.from(imageProfile, 'base64');
+    const buffer = Buffer.from(imageProfile, 'binary');
 
-    // Crear un objeto Blob
-    //const imageBlob = new Blob([imageBuffer]);
+    let data = JSON.stringify(imageProfile);
 
-    try {
+    console.log(data);
 
-        await prisma.users.create({
-            data: {
-                email: email,
-                pass: pass,
-                userType: userType,
-                firstNames: firstNames,
-                lastNames: lastNames,
-                imageProfile: imageBuffer,
-                gender: gender,
-                birthdate: new Date(birthDate)
-            }
-        });
+    // try {
+    //     await prisma.users.create({
+    //         data: {
+    //             email: email,
+    //             pass: pass,
+    //             userType: userType,
+    //             firstNames: firstNames,
+    //             lastNames: lastNames,
+    //             imageProfile: buffer,
+    //             gender: gender,
+    //             birthdate: new Date(birthDate)
+    //         }
+    //     });
 
-        let response = { "status": 200, "message": 'Usuario registrado con exito!' }
+    //     let response = { "status": 200, "message": 'Usuario registrado con exito!' }
 
-        res.json(response);
-    }
-    catch (error) { console.log(error) }
-    finally { await prisma.$disconnect(); }
+    //     res.json(response);
+    // }
+    // catch (error) { console.log(error) }
+    // finally { await prisma.$disconnect(); }
 };
 
 exports.GetUser = async (req, res) => {
@@ -120,4 +105,41 @@ exports.GetUser = async (req, res) => {
     // } catch (error) {
     //     console.log(error);
     // }
-}
+};
+
+exports.UpdateUser = async (req, res) => {
+
+    const { id } = req.params;
+
+    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
+
+    parseInt(id);
+
+    const imageBuffer = Buffer.from(imageProfile);
+
+    try {
+        await prisma.users.update({
+            where: {
+                userId: parseInt(id)
+            },
+            data: {
+                email: email,
+                pass: pass,
+                userType: userType,
+                firstNames: firstNames,
+                lastNames: lastNames,
+                imageProfile: imageBuffer,
+                gender: gender,
+                birthdate: new Date(birthDate)
+            }
+        });
+
+        let response = {
+            "status": 200,
+            "message": 'Usuario actalizado con exito!'
+        }
+
+        res.json(response);
+
+    } catch (error) { console.log(error) }
+};
