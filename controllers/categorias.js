@@ -14,11 +14,24 @@ exports.getAll = async function (req, res) {
     }
 }
 
-exports.findById = async (req, res)=> {
+exports.getActiveCategories = async function (req, res) {
+    try {
+        const categorias = await prisma.categorias.findMany({
+            where: { activo: true },
+        });
+
+        res.json(categorias);
+    } catch (error) {
+        console.error('Error al obtener categorías activas:', error);
+        res.status(500).json({ error: 'Error al obtener categorías activas' });
+    }
+};
+
+exports.findById = async (req, res) => {
     const { id } = req.params;
     try {
         const categoriaEncontrada = await categoria.findUnique({
-            where: { idCategoria: parseInt(id)}
+            where: { idCategoria: parseInt(id) }
         });
 
         if (!categoriaEncontrada) {
@@ -35,7 +48,7 @@ exports.findById = async (req, res)=> {
 exports.Register = async (req, res) => {
     var nombre = req.body.nombre;
     var descripcion = req.body.descripcion;
-    console.log(nombre , descripcion);
+    console.log(nombre, descripcion);
 
     try {
 
@@ -82,7 +95,7 @@ exports.Delete = async function (req, res) {
 
         // Realizar la baja lógica de la categoría en la base de datos
         const categoriaEliminada = await categoria.update({
-            where: { idCategoria: parseInt(id)},
+            where: { idCategoria: parseInt(id) },
             data: {
                 activo: false
             }

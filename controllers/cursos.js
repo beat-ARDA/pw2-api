@@ -96,6 +96,38 @@ exports.getCursoById = async function (req, res) {
     }
 };
 
+//Register
+exports.Register = async (req, res) => {
+    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
+
+    const imageBuffer = Buffer.from(imageProfile, 'base64');
+
+    // Crear un objeto Blob
+    //const imageBlob = new Blob([imageBuffer]);
+
+    try {
+
+        await prisma.cursos.create({
+            data: {
+                email: email,
+                pass: pass,
+                userType: userType,
+                firstNames: firstNames,
+                lastNames: lastNames,
+                imageProfile: imageBuffer,
+                gender: gender,
+                birthdate: new Date(birthDate)
+            }
+        });
+
+        let response = { "status": 200, "message": 'Usuario registrado con exito!' }
+
+        res.json(response);
+    }
+    catch (error) { console.log(error) }
+    finally { await prisma.$disconnect(); }
+};
+
 // Update
 exports.updateCurso = async function (req, res) {
     try {

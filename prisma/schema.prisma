@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,49 +8,146 @@ datasource db {
 }
 
 model users {
-  userId                Int      @id @default(autoincrement())
-  email                 String   @db.VarChar(50)
-  pass                  String   @db.VarChar(100)
-  userType              String   @db.VarChar(50)
-  firstNames            String   @db.VarChar(100)
-  lastNames             String   @db.VarChar(100)
-  imageProfile          Bytes
-  gender                String   @db.VarChar(10)
-  birthdate             DateTime
-  registrationDate      DateTime @default(now())
-  dateUpdate            DateTime @updatedAt
-  attemps               Int      @default(0)
-  cursos                curso[]
+  userId           Int                @id @default(autoincrement())
+  email            String             @db.VarChar(50)
+  pass             String             @db.VarChar(100)
+  userType         String             @db.VarChar(50)
+  firstNames       String             @db.VarChar(100)
+  lastNames        String             @db.VarChar(100)
+  imageProfile     Bytes?
+  gender           String             @db.VarChar(10)
+  birthdate        DateTime           @db.Date
+  registrationDate DateTime           @default(now()) @db.DateTime(0)
+  dateUpdate       DateTime           @default(now()) @updatedAt @db.DateTime(0)
+  attemps          Int                @default(0)
+  comentarios      comentarios[]
+  cursoalumno      cursoalumno[]
+  cursos           cursos[]
+  nivelcursoalumno nivelcursoalumno[]
+  secciones        secciones[]
+  videos           videos[]
 }
 
-model categorias{
-  idCategoria           Int       @id @default(autoincrement())
-  descripcion           String    @db.VarChar(100)
-  nombre                String    @db.VarChar(50)
-  fecha                 DateTime  @default(now())
-  activo                Boolean   @default(true)
-  cursos                categoriascursos[]
+model categorias {
+  idCategoria Int                @id @default(autoincrement())
+  descripcion String             @db.VarChar(100)
+  nombre      String             @db.VarChar(50)
+  fecha       DateTime           @default(now()) @db.DateTime(0)
+  activo      Boolean?
+  curso       categoriascursos[]
 }
 
-model curso {
-  idCurso               Int     @id @default(autoincrement())
-  cost                  Int
-  descripcion           String
-  promedio              Int
-  imagen                Bytes
-  titulo                String
-  activo                Boolean @default(true)
-  instructor            Int
-  fecha_creacion        DateTime @default(now())
-  categoriaCursos       categoriascursos[]
-  instructor_usuario    users @relation(fields: [instructor], references: [userId])
+model categoriascursos {
+  idCategoriaCurso  Int        @id @default(autoincrement())
+  curso             Int
+  categoria         Int
+  fecha             DateTime   @default(now()) @db.DateTime(0)
+  curso_detalle     cursos     @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "categoriascursos_ibfk_1")
+  categoria_detalle categorias @relation(fields: [categoria], references: [idCategoria], onDelete: NoAction, onUpdate: NoAction, map: "categoriascursos_ibfk_2")
+
+  @@index([categoria], map: "categoria")
+  @@index([curso], map: "curso")
 }
 
-model categoriascursos{
-  idCategoriaCurso      Int     @id @default(autoincrement())
-  curso                 Int
-  categoria             Int
-  fecha                 DateTime @default(now())
-  curso_detalle         curso @relation(fields: [curso], references: [idCurso])
-  categoria_detalle     categorias @relation(fields: [categoria], references: [idCategoria])
+model comentarios {
+  idComentario Int      @id @default(autoincrement())
+  idCurso      Int
+  idUsuario    Int
+  comentario   String   @db.VarChar(500)
+  calificaion  Int
+  fecha        DateTime @default(now()) @db.DateTime(0)
+  cursos       cursos   @relation(fields: [idCurso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "comentarios_ibfk_1")
+  users        users    @relation(fields: [idUsuario], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "comentarios_ibfk_2")
+
+  @@index([idCurso], map: "idCurso")
+  @@index([idUsuario], map: "idUsuario")
+}
+
+model cursoalumno {
+  idCursoAlumno     Int      @id @default(autoincrement())
+  curso             Int
+  alumno            Int
+  compro_completo   Boolean
+  termino_curso     Boolean
+  fecha_terminacion DateTime @db.DateTime(0)
+  fecha_registro    DateTime @default(now()) @db.DateTime(0)
+  forma_pago        String   @db.VarChar(50)
+  cantidad_pagada   Int
+  cursos            cursos   @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "cursoalumno_ibfk_1")
+  users             users    @relation(fields: [alumno], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "cursoalumno_ibfk_2")
+
+  @@index([alumno], map: "alumno")
+  @@index([curso], map: "curso")
+}
+
+model cursos {
+  idCurso         Int                @id @default(autoincrement())
+  cost            Int
+  descripcion     String             @db.VarChar(100)
+  promedio        Int
+  imagen          Bytes              @db.Blob
+  titulo          String             @db.VarChar(100)
+  activo          Boolean?           @default(true)
+  instructor      Int
+  fecha_creacion  DateTime           @default(now()) @db.DateTime(0)
+  categoriaCursos categoriascursos[]
+  comentarios     comentarios[]
+  cursoalumno     cursoalumno[]
+  users           users              @relation(fields: [instructor], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "cursos_ibfk_1")
+  nivelcurso      nivelcurso[]
+
+  @@index([instructor], map: "instructor")
+}
+
+model nivelcurso {
+  idNivelCurso     Int                @id @default(autoincrement())
+  curso            Int
+  costo            Int
+  titulo           String             @db.VarChar(100)
+  cursos           cursos             @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "nivelcurso_ibfk_1")
+  nivelcursoalumno nivelcursoalumno[]
+  secciones        secciones[]
+
+  @@index([curso], map: "curso")
+}
+
+model nivelcursoalumno {
+  idNivelCursoAlumno   Int        @id @default(autoincrement())
+  nivel                Int
+  alumno               Int
+  termino              Boolean    @default(false)
+  fecha_ultimo_ingreso DateTime   @default(now()) @db.DateTime(0)
+  nivelcurso           nivelcurso @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "nivelcursoalumno_ibfk_1")
+  users                users      @relation(fields: [alumno], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "nivelcursoalumno_ibfk_2")
+
+  @@index([alumno], map: "alumno")
+  @@index([nivel], map: "nivel")
+}
+
+model secciones {
+  idSecciones Int        @id @default(autoincrement())
+  nivel       Int
+  titulo      String     @db.VarChar(100)
+  contenido   Bytes      @db.Blob
+  idUsuario   Int
+  fecha       DateTime   @default(now()) @db.DateTime(0)
+  nivelcurso  nivelcurso @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_1")
+  users       users      @relation(fields: [idUsuario], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_2")
+  videos      videos[]
+
+  @@index([idUsuario], map: "idUsuario")
+  @@index([nivel], map: "nivel")
+}
+
+model videos {
+  idVideo   Int       @id @default(autoincrement())
+  video     Bytes     @db.Blob
+  idSeccion Int
+  idUsuario Int
+  fecha     DateTime  @default(now()) @db.DateTime(0)
+  secciones secciones @relation(fields: [idSeccion], references: [idSecciones], onDelete: NoAction, onUpdate: NoAction, map: "videos_ibfk_1")
+  users     users     @relation(fields: [idUsuario], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "videos_ibfk_2")
+
+  @@index([idSeccion], map: "idSeccion")
+  @@index([idUsuario], map: "idUsuario")
 }
