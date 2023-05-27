@@ -22,6 +22,9 @@ exports.getById = async function (req, res) {
             return res.status(404).json({ error: 'Curso no encontrado' });
         }
 
+        cursos.forEach((curso) => {
+            curso.imagen = Buffer.from(curso.imagen).toString('base64');
+        });
         res.json(curso);
     } catch (error) {
         console.error('Error al obtener curso por ID:', error);
