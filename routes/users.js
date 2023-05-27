@@ -15,6 +15,6 @@ const upload = multer({ storage });
 router.post('/login', usersController.Login);
 router.post('/register', upload.fields([{ name: 'imageProfile' }, { name: 'jsonData' }]), usersController.Register);
 router.get('/user/:id', usersController.GetUser);
-router.put('/user/:id', usersController.UpdateUser);
+router.put('/user/:id', upload.fields([{ name: 'imagen-perfil' }, { name: 'jsonData' }]), usersController.UpdateUser);
 
 module.exports = router;

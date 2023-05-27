@@ -107,13 +107,15 @@ exports.GetUser = async (req, res) => {
 
 exports.UpdateUser = async (req, res) => {
 
+    const imagePath = req.files['imagen-perfil'][0].path;
+
+    const imageBuffer = fs.readFileSync(imagePath);
+
     const { id } = req.params;
 
-    const { firstNames, lastNames, birthDate, imageProfile, email, pass, userType, gender } = req.body;
+    const { nombresPerfil, apellidosPerfil, correoPerfil, fechaNacimientoPerfil, pass } = req.body;
 
     parseInt(id);
-
-    const imageBuffer = Buffer.from(imageProfile);
 
     try {
         await prisma.users.update({
@@ -121,14 +123,14 @@ exports.UpdateUser = async (req, res) => {
                 userId: parseInt(id)
             },
             data: {
-                email: email,
+                email: correoPerfil,
                 pass: pass,
-                userType: userType,
-                firstNames: firstNames,
-                lastNames: lastNames,
+                userType: req.body['tipo-usuario-perfil'],
+                firstNames: nombresPerfil,
+                lastNames: apellidosPerfil,
                 imageProfile: imageBuffer,
-                gender: gender,
-                birthdate: new Date(birthDate)
+                gender: req.body['genero-perfil'],
+                birthdate: new Date(fechaNacimientoPerfil)
             }
         });
 
