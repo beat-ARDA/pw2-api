@@ -31,11 +31,18 @@ exports.getById = async function (req, res) {
 
 exports.getActive = async function (req, res) {
     try {
+
         const cursos = await prisma.cursos.findMany({
             where: { activo: true },
         });
 
-        res.json({cursos:cursos});
+        const arreglo = Object.values(cursos);
+
+        arreglo.forEach((course) => {
+            course.imagen = Buffer.from(course.imagen).toString('base64');
+        })
+
+        res.json({ cursos: cursos });
     } catch (error) {
         console.error('Error al obtener cursos activos:', error);
         res.status(500).json({ error: 'Error al obtener cursos activos' });
@@ -48,7 +55,7 @@ exports.createCurso = async function (req, res) {
     const { costoNivel, tituloNivel, tituloSeccion, contenidoSeccion } = req.body;
     const { idCategoria } = req.body;
     try {
-        
+
         const newCurso = await prisma.cursos.create({
             data: {
                 cost: parseInt(cost),
@@ -64,7 +71,7 @@ exports.createCurso = async function (req, res) {
                         {
                             fecha: new Date(),
                             categoria_detalle: {
-                                connect: { idCategoria: idCategoria}, // ID de la categoría relacionada
+                                connect: { idCategoria: idCategoria }, // ID de la categoría relacionada
                             },
                         },
                     ],

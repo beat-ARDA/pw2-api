@@ -93,16 +93,6 @@ exports.GetUser = async (req, res) => {
         res.json(response);
 
     } catch (error) { console.log(error) }
-
-    // console.log(id);
-    // const user = new User(id);
-
-    // try {
-    //     let response = await user.GetUser();
-    //     res.json(response);
-    // } catch (error) {
-    //     console.log(error);
-    // }
 };
 
 exports.UpdateUser = async (req, res) => {

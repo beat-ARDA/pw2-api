@@ -17,7 +17,7 @@ exports.getAll = async function (req, res) {
 exports.getActiveCategories = async function (req, res) {
     try {
         const categorias = await prisma.categorias.findMany({
-            where: { activo: true },
+            where: { activo: 1 },
         });
 
         res.json(categorias);

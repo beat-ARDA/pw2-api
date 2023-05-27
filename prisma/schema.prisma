@@ -8,24 +8,25 @@ datasource db {
 }
 
 model users {
-  userId                         Int                @id @default(autoincrement())
-  email                          String             @db.VarChar(50)
-  pass                           String             @db.VarChar(100)
-  userType                       String             @db.VarChar(50)
-  firstNames                     String             @db.VarChar(100)
-  lastNames                      String             @db.VarChar(100)
+  userId                         Int                  @id @default(autoincrement())
+  email                          String               @db.VarChar(50)
+  pass                           String               @db.VarChar(100)
+  userType                       String               @db.VarChar(50)
+  firstNames                     String               @db.VarChar(100)
+  lastNames                      String               @db.VarChar(100)
   imageProfile                   Bytes?
-  gender                         String             @db.VarChar(10)
-  birthdate                      DateTime           @db.Date
-  registrationDate               DateTime           @default(now()) @db.DateTime(0)
-  dateUpdate                     DateTime           @default(now()) @updatedAt @db.DateTime(0)
-  attemps                        Int                @default(0)
+  gender                         String               @db.VarChar(10)
+  birthdate                      DateTime             @db.Date
+  registrationDate               DateTime             @default(now()) @db.DateTime(0)
+  dateUpdate                     DateTime             @default(now()) @updatedAt @db.DateTime(0)
+  attemps                        Int                  @default(0)
   comentarios                    comentarios[]
   cursoalumno                    cursoalumno[]
   cursos                         cursos[]
-  mensajes_mensajes_user1Tousers mensajes[]         @relation("mensajes_user1Tousers")
-  mensajes_mensajes_user2Tousers mensajes[]         @relation("mensajes_user2Tousers")
+  mensajes_mensajes_user1Tousers mensajes[]           @relation("mensajes_user1Tousers")
+  mensajes_mensajes_user2Tousers mensajes[]           @relation("mensajes_user2Tousers")
   nivelcursoalumno               nivelcursoalumno[]
+  seccioncursoalumno             seccioncursoalumno[]
   secciones                      secciones[]
   videos                         videos[]
 }
@@ -35,7 +36,8 @@ model categorias {
   descripcion String             @db.VarChar(100)
   nombre      String             @db.VarChar(50)
   fecha       DateTime           @default(now()) @db.DateTime(0)
-  activo      Boolean?           @default(true)
+  deleted     Boolean?           @default(dbgenerated("b'0'")) @db.Bit(1)
+  activo      Int?               @default(1) @db.TinyInt
   curso       categoriascursos[]
 }
 
@@ -71,10 +73,10 @@ model cursoalumno {
   alumno            Int
   compro_completo   Boolean
   termino_curso     Boolean
-  fecha_terminacion DateTime @db.DateTime(0)
+  fecha_terminacion Float?   @db.Float
   fecha_registro    DateTime @default(now()) @db.DateTime(0)
   forma_pago        String   @db.VarChar(50)
-  cantidad_pagada   Int
+  cantidad_pagada   Float?   @db.Float
   cursos            cursos   @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "cursoalumno_ibfk_1")
   users             users    @relation(fields: [alumno], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "cursoalumno_ibfk_2")
 
@@ -83,32 +85,36 @@ model cursoalumno {
 }
 
 model cursos {
-  idCurso         Int                @id @default(autoincrement())
-  cost            Int
-  descripcion     String             @db.VarChar(100)
-  promedio        Int
-  imagen          Bytes              @db.Blob
-  titulo          String             @db.VarChar(100)
-  activo          Boolean?           @default(true)
-  instructor      Int
-  fecha_creacion  DateTime           @default(now()) @db.DateTime(0)
-  categoriaCursos categoriascursos[]
-  comentarios     comentarios[]
-  cursoalumno     cursoalumno[]
-  users           users              @relation(fields: [instructor], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "cursos_ibfk_1")
-  nivelcurso      nivelcurso[]
+  idCurso            Int                  @id @default(autoincrement())
+  cost               Float?               @db.Float
+  descripcion        String               @db.VarChar(100)
+  promedio           Int                  @default(0)
+  imagen             Bytes?
+  titulo             String               @db.VarChar(100)
+  activo             Boolean?             @default(true)
+  instructor         Int
+  fecha_creacion     DateTime             @default(now()) @db.DateTime(0)
+  categoriaCursos    categoriascursos[]
+  comentarios        comentarios[]
+  cursoalumno        cursoalumno[]
+  users              users                @relation(fields: [instructor], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "cursos_ibfk_1")
+  nivelcurso         nivelcurso[]
+  nivelcursoalumno   nivelcursoalumno[]
+  seccioncursoalumno seccioncursoalumno[]
+  secciones          secciones[]
 
   @@index([instructor], map: "instructor")
 }
 
 model nivelcurso {
-  idNivelCurso     Int                @id @default(autoincrement())
-  curso            Int
-  costo            Int
-  titulo           String             @db.VarChar(100)
-  cursos           cursos             @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "nivelcurso_ibfk_1")
-  nivelcursoalumno nivelcursoalumno[]
-  secciones        secciones[]
+  idNivelCurso       Int                  @id @default(autoincrement())
+  curso              Int
+  costo              Float?               @db.Float
+  titulo             String               @db.VarChar(100)
+  cursos             cursos               @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "nivelcurso_ibfk_1")
+  nivelcursoalumno   nivelcursoalumno[]
+  seccioncursoalumno seccioncursoalumno[]
+  secciones          secciones[]
 
   @@index([curso], map: "curso")
 }
@@ -119,26 +125,36 @@ model nivelcursoalumno {
   alumno               Int
   termino              Boolean    @default(false)
   fecha_ultimo_ingreso DateTime   @default(now()) @db.DateTime(0)
+  curso                Int?
+  cursos               cursos?    @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "curso")
   nivelcurso           nivelcurso @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "nivelcursoalumno_ibfk_1")
   users                users      @relation(fields: [alumno], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "nivelcursoalumno_ibfk_2")
 
   @@index([alumno], map: "alumno")
   @@index([nivel], map: "nivel")
+  @@index([curso], map: "curso")
 }
 
 model secciones {
-  idSecciones Int        @id @default(autoincrement())
-  nivel       Int
-  titulo      String     @db.VarChar(100)
-  contenido   Bytes      @db.Blob
-  idUsuario   Int
-  fecha       DateTime   @default(now()) @db.DateTime(0)
-  nivelcurso  nivelcurso @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_1")
-  users       users      @relation(fields: [idUsuario], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_2")
-  videos      videos[]
+  idSecciones        Int                  @id @default(autoincrement())
+  nivel              Int
+  titulo             String               @db.VarChar(100)
+  contenido          Bytes?
+  idUsuario          Int
+  fecha              DateTime             @default(now()) @db.DateTime(0)
+  video              String?              @db.VarChar(250)
+  link               String?              @db.VarChar(250)
+  curso_id           Int?
+  mime               String?              @db.VarChar(100)
+  seccioncursoalumno seccioncursoalumno[]
+  cursos             cursos?              @relation(fields: [curso_id], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "curso_id")
+  nivelcurso         nivelcurso           @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_1")
+  users              users                @relation(fields: [idUsuario], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "secciones_ibfk_2")
+  videos             videos[]
 
   @@index([idUsuario], map: "idUsuario")
   @@index([nivel], map: "nivel")
+  @@index([curso_id], map: "curso_id")
 }
 
 model videos {
@@ -165,4 +181,24 @@ model mensajes {
 
   @@index([user1], map: "user1")
   @@index([user2], map: "user2")
+}
+
+model seccioncursoalumno {
+  id_seccion_curso_alumno Int        @id @default(autoincrement())
+  nivel                   Int
+  alumno                  Int
+  seccion                 Int
+  termino_seccion         Int?       @default(0) @db.TinyInt
+  fecha_registro          DateTime?  @default(now()) @db.DateTime(0)
+  fecha_termino           DateTime?  @db.Date
+  curso                   Int?
+  cursos                  cursos?    @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "id_curso")
+  nivelcurso              nivelcurso @relation(fields: [nivel], references: [idNivelCurso], onDelete: NoAction, onUpdate: NoAction, map: "seccioncursoalumno_ibfk_1")
+  users                   users      @relation(fields: [alumno], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "seccioncursoalumno_ibfk_2")
+  secciones               secciones  @relation(fields: [seccion], references: [idSecciones], onDelete: NoAction, onUpdate: NoAction, map: "seccioncursoalumno_ibfk_3")
+
+  @@index([alumno], map: "alumno")
+  @@index([curso], map: "id_curso")
+  @@index([nivel], map: "nivel")
+  @@index([seccion], map: "seccion")
 }
