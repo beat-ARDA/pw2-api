@@ -71,8 +71,8 @@ model cursoalumno {
   idCursoAlumno     Int      @id @default(autoincrement())
   curso             Int
   alumno            Int
-  compro_completo   Boolean
-  termino_curso     Boolean
+  compro_completo   Int
+  termino_curso     Int
   fecha_terminacion Float?   @db.Float
   fecha_registro    DateTime @default(now()) @db.DateTime(0)
   forma_pago        String   @db.VarChar(50)
@@ -123,7 +123,7 @@ model nivelcursoalumno {
   idNivelCursoAlumno   Int        @id @default(autoincrement())
   nivel                Int
   alumno               Int
-  termino              Boolean    @default(false)
+  termino              Int    @default(0)
   fecha_ultimo_ingreso DateTime   @default(now()) @db.DateTime(0)
   curso                Int?
   cursos               cursos?    @relation(fields: [curso], references: [idCurso], onDelete: NoAction, onUpdate: NoAction, map: "curso")
