@@ -1,4 +1,4 @@
-const { PrismaClient,sql } = require('@prisma/client');
+const { PrismaClient, sql } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 
@@ -64,10 +64,27 @@ exports.sp_ObtenerKardex = async function (req, res) {
 };
 
 exports.kardexSelect = async function (req, res) {
-    const{_alumno, _fecha_inicio, _fecha_fin, _categoria, _cursos_terminados, _cursos_activos} = req.body;
+    const { id } = req.param;
     try {
-        
-    }catch (error) {
+        const cursosConAlumnos = await prisma.cursos.findMany({
+            where: {
+                cursoalumno: {
+                    some: {
+                        alumno: id,
+                    },
+                },
+            },
+            include: {
+                cursoalumno: true,
+                users: true,
+            },
+        });
+        cursosConAlumnos.forEach((curso) => {
+            curso.imagen = Buffer.from(curso.imagen).toString('base64');
+            
+        });
+        res.json(cursosConAlumnos);
+    } catch (error) {
         console.error(error);
         throw new Error('Error retrieving kardex');
     }
