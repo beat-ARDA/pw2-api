@@ -63,7 +63,7 @@ exports.Register = async (req, res) => {
 
         res.json(response);
     }
-    catch (error) { console.log(error) }
+    catch (error) { console.log(error); let response = { "status": 500, "message": 'Hubo un error, intentelo mas tarde' }; res.json(response);}
     finally { await prisma.$disconnect(); }
 }
 

@@ -5,9 +5,12 @@ const prisma = new PrismaClient();
 
 exports.getCursoMasVendidos = async function (req, res) {
     try {
-        const cursos = await prisma.cursos.findMany({
+        const cursosMasVendidos = await prisma.cursos.findMany({
             select: {
                 idCurso: true,
+                cantidadVendida: {
+                    count: { curso: true }
+                },
                 cost: true,
                 descripcion: true,
                 promedio: true,
@@ -15,23 +18,10 @@ exports.getCursoMasVendidos = async function (req, res) {
                 titulo: true,
                 activo: true,
                 instructor: true,
-                fecha_creacion: true,
-                cantidadVendida: {
-                    count: true,
-                    _sum: {
-                        cursoalumno: {
-                            curso: true
-                        }
-                    }
-                }
+                fecha_creacion: true
             },
             where: {
-                activo: true
-            },
-            orderBy: {
-                cantidadVendida: {
-                    _count: 'desc'
-                }
+                activo: 1
             },
             groupBy: {
                 idCurso: true,
@@ -43,13 +33,17 @@ exports.getCursoMasVendidos = async function (req, res) {
                 activo: true,
                 instructor: true,
                 fecha_creacion: true
+            },
+            orderBy: {
+                cantidadVendida: {
+                    desc: true
+                }
             }
         });
 
-        cursos.forEach((curso) => {
-            curso.imagen = Buffer.from(curso.imagen).toString('base64');
-        });
-        res.json(cursos);
+
+
+        res.json(cursosMasVendidos);
     } catch (error) {
         console.error('Error al obtener cursos:', error);
         res.status(500).json({ error: 'Error al obtener cursos' });
