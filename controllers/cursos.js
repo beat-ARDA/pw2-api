@@ -11,7 +11,7 @@ exports.getAll = async function (req, res) {
     }
 };
 
-exports.getById = async function (req, res) {
+/* exports.getById = async function (req, res) {
     try {
         const { id } = req.params;
         const curso = await prisma.cursos.findUnique({
@@ -27,6 +27,48 @@ exports.getById = async function (req, res) {
         console.error('Error al obtener curso por ID:', error);
         res.status(500).json({ error: 'Error al obtener curso por ID' });
     }
+}; */
+
+exports.getById = async function (req, res) {
+
+    try {
+        const { id } = req.params;
+        const curso = await prisma.cursos.findUnique({
+
+            where: { idCurso: parseInt(id) },
+
+        });
+
+        const levels = await prisma.nivelcurso.findFirst({
+
+            where: { curso: parseInt(id) },
+
+        });
+
+        // const sections = await prisma.nivelcurso.findFirst({
+
+        //     where: { curso_id: parseInt(id) },
+
+        // });
+
+        if (!curso) {
+
+            return res.status(404).json({ error: 'Curso no encontrado' });
+
+        }
+
+        console.log(levels);
+
+        res.json({section:{levels,curso}});
+
+    } catch (error) {
+
+        console.error('Error al obtener curso por ID:', error);
+
+        res.status(500).json({ error: 'Error al obtener curso por ID' });
+
+    }
+
 };
 
 exports.getActive = async function (req, res) {

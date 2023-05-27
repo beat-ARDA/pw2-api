@@ -37,6 +37,7 @@ model categorias {
   nombre      String             @db.VarChar(50)
   fecha       DateTime           @default(now()) @db.DateTime(0)
   deleted     Boolean?           @default(dbgenerated("b'0'")) @db.Bit(1)
+  activo      Int                @default(1)
   curso       categoriascursos[]
 }
 

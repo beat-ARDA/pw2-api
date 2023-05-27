@@ -4,6 +4,7 @@ const categoriasRoutes=require('./routes/categorias.js')
 const cursoRoutes=require('./routes/cursos.js')
 const comentariosRoutes=require('./routes/comentarios.js')
 const filtrosRoute=require('./routes/filtros.js')
+const KardexRoute=require('./routes/Kardex.js')
 
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -22,6 +23,8 @@ app.use('/api', categoriasRoutes);
 app.use('/api', cursoRoutes);
 app.use('/api', comentariosRoutes);
 app.use('/api', filtrosRoute);
+app.use('/api', KardexRoute);
+
 
 app.get('/', (req, res) => {
     res.json({ message: '¡Hola desde tu API!' });
