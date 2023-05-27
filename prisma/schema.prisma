@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:Pink$1624@192.168.100.111:3306/apicursos"
+  url      = "mysql://root:Zomrromr@localhost:3306/apicursos"
 }
 
 model users {
@@ -37,7 +37,6 @@ model categorias {
   nombre      String             @db.VarChar(50)
   fecha       DateTime           @default(now()) @db.DateTime(0)
   deleted     Boolean?           @default(dbgenerated("b'0'")) @db.Bit(1)
-  activo      Int?               @default(1) @db.TinyInt
   curso       categoriascursos[]
 }
 

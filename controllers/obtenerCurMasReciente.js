@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 exports.getCursoMasReciente = async function (req, res) {
     try {
-        const cursos = await prisma.curso.findMany({
+        const cursos = await prisma.cursos.findMany({
             where: {
                 activo: true
             },
